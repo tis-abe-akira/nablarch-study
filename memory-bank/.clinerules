@@ -1,0 +1,44 @@
+# Nablarch Study Project Rules and Patterns
+
+## Project Intelligence
+1. Documentation Rules
+   - All memory bank files are in English
+   - Chat communication in Japanese
+   - Code comments in Japanese
+   - Documentation updates require reviewing all files
+
+2. Project Structure
+   - All project files in /Users/akiraabe/practice/nablarch-study
+   - Memory bank in memory-bank/ directory
+   - Core documentation files maintained and updated regularly
+
+3. Development Workflow
+   - Documentation first approach
+   - Iterative learning process
+   - Regular memory bank updates
+   - Progressive complexity in examples
+
+## Key Patterns
+1. Memory Bank Usage
+   - Review all files at start of each task
+   - Update relevant files after significant changes
+   - Keep activeContext.md and progress.md current
+   - Document new learnings immediately
+
+2. Communication
+   - Chat in Japanese
+   - Technical documentation in English
+   - Clear and concise responses
+   - Focus on technical accuracy
+
+## Known Preferences
+1. Language
+   - Chat: Japanese (フレンドリーな話し方)
+   - Documentation: English
+   - Code Comments: Japanese
+
+2. Development
+   - Documentation-driven development
+   - Focus on learning and understanding
+   - Progressive complexity approach
+   - Practical examples emphasis
