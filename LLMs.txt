@@ -1,0 +1,92 @@
+# Nablarch Framework Reference Documentation
+
+## Source Documentation
+Primary Documentation: https://nablarch.github.io/docs/LATEST/doc/
+English Documentation: https://nablarch.github.io/docs/LATEST/doc/en/
+
+## Core Documentation References
+
+1. Overview and Architecture
+- Main Overview: https://nablarch.github.io/docs/LATEST/doc/en/application_framework/application_framework/nablarch/index.html
+- Architecture Details: https://nablarch.github.io/docs/LATEST/doc/en/application_framework/application_framework/nablarch/architecture.html
+- Big Picture: https://nablarch.github.io/docs/LATEST/doc/en/application_framework/application_framework/nablarch/big_picture.html
+
+2. Application Types
+- Web Applications: https://nablarch.github.io/docs/LATEST/doc/en/application_framework/application_framework/web/index.html
+- Batch Applications: https://nablarch.github.io/docs/LATEST/doc/en/application_framework/application_framework/batch/nablarch_batch/index.html
+- RESTful Web Services: https://nablarch.github.io/docs/LATEST/doc/en/application_framework/application_framework/web_service/rest/index.html
+- HTTP Messaging: https://nablarch.github.io/docs/LATEST/doc/en/application_framework/application_framework/web_service/http_messaging/index.html
+
+3. Validation Framework
+- Bean Validation: https://nablarch.github.io/docs/LATEST/doc/en/application_framework/application_framework/libraries/validation/bean_validation.html
+- Nablarch Validation: https://nablarch.github.io/docs/LATEST/doc/en/application_framework/application_framework/libraries/validation/nablarch_validation.html
+- Input Value Check: https://nablarch.github.io/docs/LATEST/doc/en/application_framework/application_framework/libraries/validation.html
+
+4. Database and Data Access
+- Database Library: https://nablarch.github.io/docs/LATEST/doc/en/application_framework/application_framework/libraries/database/index.html
+- Database Management: https://nablarch.github.io/docs/LATEST/doc/en/application_framework/application_framework/libraries/database/database.html
+- Universal DAO: https://nablarch.github.io/docs/LATEST/doc/en/application_framework/application_framework/libraries/database/universal_dao.html
+- Transaction Management: https://nablarch.github.io/docs/LATEST/doc/en/application_framework/application_framework/handlers/common/transaction_management_handler.html
+
+5. Security Features
+- Authentication: https://nablarch.github.io/docs/LATEST/doc/en/application_framework/application_framework/libraries/authentication.html
+- Authorization: https://nablarch.github.io/docs/LATEST/doc/en/application_framework/application_framework/libraries/authorization.html
+- CSRF Protection: https://nablarch.github.io/docs/LATEST/doc/en/application_framework/application_framework/handlers/web/csrf_token_verification_handler.html
+- Password Encryption: https://nablarch.github.io/docs/LATEST/doc/en/application_framework/application_framework/libraries/password_encryption.html
+
+6. Development Tools
+- SQL Executor: https://nablarch.github.io/docs/LATEST/doc/en/development_tools/toolbox/SqlExecutor/SqlExecutor.html
+- Testing Framework: https://nablarch.github.io/docs/LATEST/doc/en/development_tools/testing_framework/index.html
+- JSP Static Analysis: https://nablarch.github.io/docs/LATEST/doc/en/development_tools/toolbox/JspStaticAnalysis/01_JspStaticAnalysis.html
+- Database Tools: https://nablarch.github.io/docs/LATEST/doc/en/development_tools/toolbox/index.html
+
+7. Handler References
+- Common Handlers: https://nablarch.github.io/docs/LATEST/doc/en/application_framework/application_framework/handlers/common/index.html
+- Web Handlers: https://nablarch.github.io/docs/LATEST/doc/en/application_framework/application_framework/handlers/web/index.html
+- Batch Handlers: https://nablarch.github.io/docs/LATEST/doc/en/application_framework/application_framework/handlers/batch/index.html
+- REST Handlers: https://nablarch.github.io/docs/LATEST/doc/en/application_framework/application_framework/handlers/rest/index.html
+
+8. Messaging and Integration
+- Messaging Overview: https://nablarch.github.io/docs/LATEST/doc/en/application_framework/application_framework/messaging/index.html
+- Email Integration: https://nablarch.github.io/docs/LATEST/doc/en/application_framework/application_framework/libraries/mail.html
+- HTTP Messaging: https://nablarch.github.io/docs/LATEST/doc/en/application_framework/application_framework/web_service/http_messaging/architecture.html
+- Database Messaging: https://nablarch.github.io/docs/LATEST/doc/en/application_framework/application_framework/messaging/db/index.html
+
+9. Getting Started Guides
+- Web Application: https://nablarch.github.io/docs/LATEST/doc/en/application_framework/application_framework/web/getting_started/index.html
+- REST Services: https://nablarch.github.io/docs/LATEST/doc/en/application_framework/application_framework/web_service/rest/getting_started/index.html
+- Batch Processing: https://nablarch.github.io/docs/LATEST/doc/en/application_framework/application_framework/batch/nablarch_batch/getting_started/getting_started.html
+- Blank Project: https://nablarch.github.io/docs/LATEST/doc/en/application_framework/application_framework/blank_project/index.html
+
+10. Example Applications and Code
+Main Examples Repository: https://nablarch.github.io/docs/LATEST/doc/en/examples/index.html
+- Web Example: https://github.com/nablarch/nablarch-example-web
+- REST Example: https://github.com/nablarch/nablarch-example-rest
+- Batch Example: https://github.com/nablarch/nablarch-example-batch
+- Messaging Example: https://github.com/nablarch/nablarch-example-mom
+- HTTP Messaging: https://github.com/nablarch/nablarch-example-http-messaging
+- DB Messaging: https://github.com/nablarch/nablarch-example-db-queue
+
+11. Additional Resources
+- API Documentation: https://nablarch.github.io/docs/6u2/javadoc/
+- Maven Repository: https://nablarch.github.io/docs/LATEST/doc/en/application_framework/application_framework/blank_project/maven.html
+- Migration Guides: https://nablarch.github.io/docs/LATEST/doc/en/application_framework/application_framework/blank_project/ModifySettings.html
+
+## Limitations and Known Issues
+Documentation Link: https://nablarch.github.io/docs/LATEST/doc/en/application_framework/application_framework/nablarch/policy.html
+
+1. Testing Framework Limitations
+- No multi-thread testing support
+- Limited Jakarta Batch testing capabilities
+Reference: https://nablarch.github.io/docs/LATEST/doc/en/development_tools/testing_framework/index.html
+
+2. SQL Executor Constraints
+- No support for WITH clause
+- IN clause limitations
+- DATETIME literal restrictions
+Reference: https://nablarch.github.io/docs/LATEST/doc/en/development_tools/toolbox/SqlExecutor/SqlExecutor.html
+
+3. Java Compatibility
+- Java 17 compliance required
+- Special considerations for Java 21
+Reference: https://nablarch.github.io/docs/LATEST/doc/en/application_framework/application_framework/nablarch/policy.html#compliant-with-java17
