@@ -1,15 +1,15 @@
 # Active Context: Nablarch Study
 
 ## Current Focus
-1. Project Initialization
-   - Setting up memory bank structure
-   - Documenting initial context
-   - Establishing project foundations
+1. トレーニング管理システムの設計
+   - RESTful APIの設計
+   - データモデルの定義
+   - 実装ガイドの作成
 
-2. Learning Path Planning
-   - Identifying key learning areas
-   - Structuring study approach
-   - Planning example implementations
+2. 技術スタック計画
+   - Nablarchフレームワークの活用
+   - RESTfulウェブサービスの実装
+   - データベース設計
 
 ## Recent Changes
 1. Project Setup
@@ -25,19 +25,19 @@
 
 ## Next Steps
 1. Immediate Tasks
-   - Set up development environment
-   - Install required dependencies
-   - Create initial example project
+   - 開発環境のセットアップ
+   - データベースの構築
+   - プロジェクトの初期化
 
 2. Short-term Goals
-   - Study basic Nablarch concepts
-   - Create simple application example
-   - Document initial learnings
+   - トレーニング種目APIの実装
+   - 目標管理APIの実装
+   - 基本的なテストの作成
 
 3. Medium-term Goals
-   - Implement core patterns
-   - Build more complex examples
-   - Expand documentation
+   - 全APIエンドポイントの実装
+   - セキュリティ機能の実装
+   - 運用監視の設定
 
 ## Active Decisions
 1. Development Environment

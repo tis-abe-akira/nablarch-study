@@ -20,29 +20,29 @@
    - Database configuration
    - IDE setup and configuration
 
-2. Learning Materials
-   - Basic concept tutorials
-   - Example applications
-   - Practice exercises
-   - Code templates
+2. トレーニング管理APIの実装
+   - プロジェクトのセットアップ
+   - データベーススキーマの作成
+   - APIエンドポイントの実装
+   - テストの実装と実行
 
 3. Documentation Expansion
-   - Detailed architecture docs
-   - Implementation guides
-   - Best practices documentation
-   - Troubleshooting guides
+   - プロジェクト固有の設定ガイド
+   - デプロイメントガイド
+   - APIドキュメント
+   - トラブルシューティングガイド
 
 ## Current Status
 1. Project Initialization
    - Status: In Progress
-   - Phase: Documentation Setup
+   - Phase: API Design
    - Next: Development Environment Setup
 
 2. Documentation Status
    - Core files: Complete
-   - Learning materials: Not Started
-   - Example code: Not Started
-   - Best practices: Not Started
+   - API設計ドキュメント: Complete
+   - 実装ガイド: Complete
+   - Best practices: In Progress
 
 ## Known Issues
 1. Setup Requirements

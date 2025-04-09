@@ -1,372 +1,397 @@
-# 筋トレ管理システム 開発ガイド
+# トレーニング管理システム実装ガイド
 
-## 目次
-1. [環境構築](#環境構築)
-2. [アプリケーション構造](#アプリケーション構造)
-3. [実装例](#実装例)
-4. [API仕様](#api仕様)
+## はじめに
 
-## 環境構築
+このガイドは、Nablarchフレームワークを使用してRESTful APIを実装する実践的な学習教材です。トレーニング管理システムの開発を通じて、エンタープライズJavaアプリケーション開発の基礎を学びます。
 
-### 前提条件
-- JDK 8以上
-- Maven 3.x
-- PostgreSQL（または他のRDBMS）
+### 学習の目的
 
-### セットアップ手順
-1. [Nablarchのセットアップガイド](https://nablarch.github.io/docs/LATEST/doc/application_framework/application_framework/blank_project/FirstStep.html)に従って、プロジェクトを作成してください。
-2. [RESTfulウェブサービス編](https://nablarch.github.io/docs/LATEST/doc/application_framework/application_framework/web_service/rest/index.html)を参照し、REST API用の設定を行ってください。
+このガイドでは以下の知識とスキルを習得することができます：
 
-## アプリケーション構造
+1. **Nablarchフレームワークの基礎**
+   - RESTfulウェブサービスの実装方法
+   - データベースアクセスの実装
+   - バリデーションの実装
+   - セキュリティ対策の実装
 
-### レイヤー構成
+2. **エンタープライズアプリケーション開発スキル**
+   - レイヤード・アーキテクチャの実践
+   - データモデリングとテーブル設計
+   - APIエンドポイントの設計
+   - テストの実装
+
+3. **実務で必要となる周辺知識**
+   - プロジェクト構成管理
+   - ビルドとデプロイメント
+   - 運用監視の設定
+   - API仕様書の作成
+
+### 学習の進め方
+
+1. **環境構築フェーズ**
+   - Nablarchの基本概念の理解
+   - 開発環境のセットアップ
+   - プロジェクトの初期化
+
+2. **基本実装フェーズ**
+   - データベーススキーマの作成
+   - 基本的なCRUD操作の実装
+   - 単体テストの作成
+
+3. **応用実装フェーズ**
+   - バリデーションの追加
+   - セキュリティ機能の実装
+   - 結合テストの作成
+
+4. **運用準備フェーズ**
+   - API仕様書の作成
+   - 運用監視の設定
+   - デプロイ手順の確認
+
+各フェーズで作成したコードやドキュメントは、実際の業務でも応用できる実践的なものとなっています。
+
+## 1. システム概要
+
+このシステムは、筋トレの目標設定、スケジュール管理、実績記録を行うRESTful APIを提供します。Nablarchフレームワークを使用して実装します。
+
+## 2. システム構成
 
 ```mermaid
 graph TD
-    A[Action] --> B[Service]
-    B --> C[Repository]
-    C --> D[Entity]
-    E[Form] --> A
+    Client[クライアントアプリケーション] -->|REST API| Server[Nablarchアプリケーション]
+    Server --> DB[(データベース)]
+    
+    subgraph データベース
+        Goals[目標テーブル]
+        Schedule[予定テーブル]
+        Results[実績テーブル]
+        Exercises[トレーニング種目マスタ]
+    end
 ```
 
-各レイヤーの責務は以下の通りです：
+## 3. データモデル
 
-- **Action**: リクエストの受付、バリデーション、レスポンス生成
-- **Form**: リクエストデータの保持、バリデーション定義
-- **Service**: ビジネスロジックの実装
-- **Repository**: データアクセス処理の実装
-- **Entity**: データモデルの定義
-
-### リクエスト/レスポンスの流れ
-
-1. クライアントからのリクエストをActionが受け付ける
-2. Formクラスでリクエストデータをバリデーション
-3. Serviceクラスでビジネスロジックを実行
-4. Repositoryクラスでデータアクセスを実行
-5. 処理結果をJSON形式でレスポンス
-
-## 実装例
-
-### エンティティ定義
-
-```java
-package com.example.training.entity;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import java.time.LocalDate;
-
-@Entity
-@Table(name = "goals")
-public class Goal {
-    @Id
-    @Column(name = "id")
-    private Long id;
-
-    @Column(name = "target_muscle")
-    private String targetMuscle;
-
-    @Column(name = "target_weight")
-    private Integer targetWeight;
-
-    @Column(name = "target_reps")
-    private Integer targetReps;
-
-    @Column(name = "target_date")
-    private LocalDate targetDate;
-
-    // Getter/Setter
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTargetMuscle() {
-        return targetMuscle;
-    }
-
-    public void setTargetMuscle(String targetMuscle) {
-        this.targetMuscle = targetMuscle;
-    }
-
-    public Integer getTargetWeight() {
-        return targetWeight;
-    }
-
-    public void setTargetWeight(Integer targetWeight) {
-        this.targetWeight = targetWeight;
-    }
-
-    public Integer getTargetReps() {
-        return targetReps;
-    }
-
-    public void setTargetReps(Integer targetReps) {
-        this.targetReps = targetReps;
-    }
-
-    public LocalDate getTargetDate() {
-        return targetDate;
-    }
-
-    public void setTargetDate(LocalDate targetDate) {
-        this.targetDate = targetDate;
-    }
-}
+### 3.1 トレーニング種目（exercises）
+```sql
+CREATE TABLE exercises (
+    exercise_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    category VARCHAR(50) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 ```
 
-### フォームクラス
-
-```java
-package com.example.training.form;
-
-import nablarch.core.validation.ee.Domain;
-import nablarch.core.validation.ee.Required;
-
-public class GoalForm {
-    @Required
-    @Domain("targetMuscle")
-    private String targetMuscle;
-
-    @Required
-    @Domain("targetWeight")
-    private Integer targetWeight;
-
-    @Required
-    @Domain("targetReps")
-    private Integer targetReps;
-
-    @Required
-    @Domain("targetDate")
-    private String targetDate;
-
-    // Getter/Setter
-    public String getTargetMuscle() {
-        return targetMuscle;
-    }
-
-    public void setTargetMuscle(String targetMuscle) {
-        this.targetMuscle = targetMuscle;
-    }
-
-    public Integer getTargetWeight() {
-        return targetWeight;
-    }
-
-    public void setTargetWeight(Integer targetWeight) {
-        this.targetWeight = targetWeight;
-    }
-
-    public Integer getTargetReps() {
-        return targetReps;
-    }
-
-    public void setTargetReps(Integer targetReps) {
-        this.targetReps = targetReps;
-    }
-
-    public String getTargetDate() {
-        return targetDate;
-    }
-
-    public void setTargetDate(String targetDate) {
-        this.targetDate = targetDate;
-    }
-}
+### 3.2 目標（goals）
+```sql
+CREATE TABLE goals (
+    goal_id SERIAL PRIMARY KEY,
+    user_id VARCHAR(100) NOT NULL,
+    exercise_id INTEGER REFERENCES exercises(exercise_id),
+    target_weight DECIMAL(5,2),
+    target_reps INTEGER,
+    target_sets INTEGER,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    status VARCHAR(20) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 ```
 
-### リポジトリ実装
-
-```java
-package com.example.training.repository;
-
-import com.example.training.entity.Goal;
-import nablarch.common.dao.EntityList;
-import nablarch.common.dao.UniversalDao;
-import org.springframework.stereotype.Repository;
-
-@Repository
-public class GoalRepository {
-    
-    public Goal find(Long id) {
-        return UniversalDao.findById(Goal.class, id);
-    }
-    
-    public EntityList<Goal> findAll() {
-        return UniversalDao.findAll(Goal.class);
-    }
-    
-    public void create(Goal goal) {
-        UniversalDao.insert(goal);
-    }
-    
-    public void update(Goal goal) {
-        UniversalDao.update(goal);
-    }
-}
+### 3.3 トレーニング予定（schedules）
+```sql
+CREATE TABLE schedules (
+    schedule_id SERIAL PRIMARY KEY,
+    user_id VARCHAR(100) NOT NULL,
+    training_date DATE NOT NULL,
+    exercise_id INTEGER REFERENCES exercises(exercise_id),
+    planned_weight DECIMAL(5,2),
+    planned_reps INTEGER,
+    planned_sets INTEGER,
+    note TEXT,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 ```
 
-### サービス実装
-
-```java
-package com.example.training.service;
-
-import com.example.training.entity.Goal;
-import com.example.training.repository.GoalRepository;
-import nablarch.common.dao.EntityList;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-@Service
-public class GoalService {
-    
-    private final GoalRepository goalRepository;
-    
-    public GoalService(GoalRepository goalRepository) {
-        this.goalRepository = goalRepository;
-    }
-    
-    public Goal findGoal(Long id) {
-        return goalRepository.find(id);
-    }
-    
-    public EntityList<Goal> findAllGoals() {
-        return goalRepository.findAll();
-    }
-    
-    @Transactional
-    public void createGoal(Goal goal) {
-        goalRepository.create(goal);
-    }
-}
+### 3.4 トレーニング実績（results）
+```sql
+CREATE TABLE results (
+    result_id SERIAL PRIMARY KEY,
+    schedule_id INTEGER REFERENCES schedules(schedule_id),
+    user_id VARCHAR(100) NOT NULL,
+    exercise_id INTEGER REFERENCES exercises(exercise_id),
+    actual_weight DECIMAL(5,2),
+    actual_reps INTEGER,
+    actual_sets INTEGER,
+    completed_at TIMESTAMP NOT NULL,
+    feeling INTEGER CHECK (feeling BETWEEN 1 AND 5),
+    note TEXT,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 ```
 
-### アクション実装
+## 4. API エンドポイント
 
-```java
-package com.example.training.action;
+### 4.1 トレーニング種目管理
 
-import com.example.training.entity.Goal;
-import com.example.training.form.GoalForm;
-import com.example.training.service.GoalService;
-import nablarch.common.dao.EntityList;
-import nablarch.core.beans.BeanUtil;
-import nablarch.fw.ExecutionContext;
-import nablarch.fw.web.HttpRequest;
-import nablarch.fw.web.HttpResponse;
+- `GET /api/exercises` - 種目一覧の取得
+- `GET /api/exercises/{exerciseId}` - 種目詳細の取得
+- `POST /api/exercises` - 新規種目の登録
+- `PUT /api/exercises/{exerciseId}` - 種目情報の更新
+- `DELETE /api/exercises/{exerciseId}` - 種目の削除
 
-public class GoalAction {
-    
-    private final GoalService goalService;
-    
-    public GoalAction(GoalService goalService) {
-        this.goalService = goalService;
-    }
-    
-    public HttpResponse list(HttpRequest request, ExecutionContext context) {
-        EntityList<Goal> goals = goalService.findAllGoals();
-        return new HttpResponse(200).write(goals);
-    }
-    
-    public HttpResponse get(HttpRequest request, ExecutionContext context) {
-        Long id = Long.parseLong(request.getParam("id")[0]);
-        Goal goal = goalService.findGoal(id);
-        return new HttpResponse(200).write(goal);
-    }
-    
-    public HttpResponse create(HttpRequest request, ExecutionContext context) {
-        GoalForm form = BeanUtil.createAndCopy(GoalForm.class, request.getParamMap());
-        Goal goal = BeanUtil.createAndCopy(Goal.class, form);
-        goalService.createGoal(goal);
-        return new HttpResponse(201);
-    }
-}
+### 4.2 目標管理
+
+- `GET /api/goals` - 目標一覧の取得
+- `GET /api/goals/{goalId}` - 目標詳細の取得
+- `POST /api/goals` - 新規目標の設定
+- `PUT /api/goals/{goalId}` - 目標の更新
+- `DELETE /api/goals/{goalId}` - 目標の削除
+
+### 4.3 スケジュール管理
+
+- `GET /api/schedules` - スケジュール一覧の取得
+- `GET /api/schedules/{scheduleId}` - スケジュール詳細の取得
+- `POST /api/schedules` - 新規スケジュールの登録
+- `PUT /api/schedules/{scheduleId}` - スケジュールの更新
+- `DELETE /api/schedules/{scheduleId}` - スケジュールの削除
+
+### 4.4 実績管理
+
+- `GET /api/results` - 実績一覧の取得
+- `GET /api/results/{resultId}` - 実績詳細の取得
+- `POST /api/results` - 新規実績の記録
+- `PUT /api/results/{resultId}` - 実績の更新
+- `DELETE /api/results/{resultId}` - 実績の削除
+
+## 5. 実装手順
+
+### 5.1 プロジェクトのセットアップ
+
+1. Nablarchのブランクプロジェクトを作成
+```bash
+mvn org.apache.maven.plugins:maven-archetype-plugin:2.4:generate \
+    -DarchetypeGroupId=com.nablarch.archetype \
+    -DarchetypeArtifactId=nablarch-rest-service-archetype \
+    -DarchetypeVersion=5u18 \
+    -DgroupId=com.example \
+    -DartifactId=training-management-api \
+    -Dversion=0.1.0
 ```
 
-### テスト実装
+2. プロジェクト設定の確認と調整
+   - `pom.xml`の依存関係
+   - データベース設定
+   - 環境設定ファイル
 
+### 5.2 データベースのセットアップ
+
+1. データベースの作成
+2. テーブル定義の実行
+3. 初期データの投入（必要な場合）
+
+### 5.3 Action クラスの実装
+
+各エンドポイントに対応するActionクラスを作成します。
+
+例）トレーニング種目の取得API：
 ```java
-package com.example.training.action;
+@Controller
+@RequestMapping("/api/exercises")
+public class ExerciseAction {
 
-import com.example.training.entity.Goal;
-import com.example.training.service.GoalService;
-import nablarch.fw.web.HttpResponse;
-import nablarch.test.core.http.SimpleHttpRequestBuilder;
-import nablarch.test.junit5.extension.NonAutoDetectEventListenerExtension;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-@ExtendWith(NonAutoDetectEventListenerExtension.class)
-public class GoalActionTest {
-    
-    private final GoalService goalService = new GoalService(/* repository */);
-    private final GoalAction action = new GoalAction(goalService);
-    
-    @Test
-    void testCreate() {
-        SimpleHttpRequestBuilder builder = new SimpleHttpRequestBuilder();
-        builder.setParam("targetMuscle", "大胸筋");
-        builder.setParam("targetWeight", "80");
-        builder.setParam("targetReps", "10");
-        builder.setParam("targetDate", "2024-12-31");
+    @InjectForm(form = ExerciseSearchForm.class)
+    public HttpResponse list(HttpRequest request) {
+        ExerciseSearchForm form = context.getRequestScopedVar("form");
         
-        HttpResponse response = action.create(builder.build(), null);
-        assertEquals(201, response.getStatusCode());
+        List<Exercise> exercises = UniversalDao.findAll(Exercise.class);
+        
+        return new JsonResponse(exercises);
+    }
+
+    @RequestMapping("/{exerciseId}")
+    public HttpResponse get(HttpRequest request) {
+        String exerciseId = request.getParam("exerciseId")[0];
+        
+        Exercise exercise = UniversalDao.findById(Exercise.class, exerciseId);
+        
+        return new JsonResponse(exercise);
     }
 }
 ```
 
-## API仕様
+### 5.4 Form クラスの実装
 
-### 目標一覧取得 API
+リクエストパラメータのバリデーションを行うFormクラスを実装します。
 
-- **エンドポイント**: GET /api/v1/goals
-- **レスポンス例**:
-```json
-{
-  "goals": [
-    {
-      "id": 1,
-      "targetMuscle": "大胸筋",
-      "targetWeight": 80,
-      "targetReps": 10,
-      "targetDate": "2024-12-31"
+例）トレーニング種目登録用Form：
+```java
+public class ExerciseForm {
+
+    @Required
+    @Length(max = 100)
+    private String name;
+
+    @Required
+    @Length(max = 50)
+    private String category;
+
+    @Length(max = 1000)
+    private String description;
+
+    // getter/setterメソッド
+}
+```
+
+### 5.5 エンティティクラスの実装
+
+データベースのテーブルに対応するエンティティクラスを実装します。
+
+例）トレーニング種目エンティティ：
+```java
+@Entity
+@Table(name = "exercises")
+public class Exercise {
+
+    @Id
+    @Column(name = "exercise_id")
+    private Long exerciseId;
+
+    @Column(name = "name", nullable = false)
+    private String name;
+
+    @Column(name = "category", nullable = false)
+    private String category;
+
+    @Column(name = "description")
+    private String description;
+
+    // getter/setterメソッド
+}
+```
+
+### 5.6 テストの実装
+
+1. 単体テスト
+   - Formクラスのバリデーションテスト
+   - Actionクラスのテスト
+   - エンティティクラスのテスト
+
+2. 結合テスト
+   - APIエンドポイントの結合テスト
+   - データベースアクセスのテスト
+
+例）トレーニング種目取得APIのテスト：
+```java
+public class ExerciseActionTest {
+
+    @Test
+    public void testList() {
+        HttpResponse response = new ExerciseAction().list(new MockHttpRequest());
+        
+        assertThat(response.getStatusCode(), is(200));
+        // レスポンスの検証
     }
-  ]
 }
 ```
 
-### 目標設定 API
+## 6. セキュリティ対策
 
-- **エンドポイント**: POST /api/v1/goals
-- **リクエスト例**:
-```json
-{
-  "targetMuscle": "大胸筋",
-  "targetWeight": 80,
-  "targetReps": 10,
-  "targetDate": "2024-12-31"
-}
+1. 認証・認可の実装
+   - Bearer トークン認証の実装
+   - ユーザーごとのデータアクセス制御
+
+2. 入力値のバリデーション
+   - XSS対策
+   - SQLインジェクション対策
+
+3. CORS設定
+   - 許可するオリジンの設定
+   - プリフライトリクエストの処理
+
+## 7. 運用・監視
+
+1. ログ出力の設定
+   - アクセスログ
+   - エラーログ
+   - 監査ログ
+
+2. パフォーマンスモニタリング
+   - レスポンス時間の監視
+   - リソース使用状況の監視
+
+## 8. デプロイメント
+
+1. ビルド
+```bash
+mvn clean package
 ```
-- **レスポンス**: 201 Created
 
-### 目標詳細取得 API
+2. デプロイ
+   - アプリケーションサーバーの選択と設定
+   - デプロイ手順の文書化
+   - 環境別設定の管理
 
-- **エンドポイント**: GET /api/v1/goals/{id}
-- **レスポンス例**:
-```json
-{
-  "id": 1,
-  "targetMuscle": "大胸筋",
-  "targetWeight": 80,
-  "targetReps": 10,
-  "targetDate": "2024-12-31"
-}
+## 9. API ドキュメント
+
+OpenAPI（Swagger）を使用してAPI仕様書を作成します。
+
+```yaml
+openapi: 3.0.0
+info:
+  title: トレーニング管理API
+  version: 1.0.0
+paths:
+  /api/exercises:
+    get:
+      summary: トレーニング種目一覧の取得
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Exercise'
 ```
+
+## 10. 今後の拡張性
+
+1. 機能拡張の検討
+   - トレーニング履歴の分析機能
+   - 目標達成度の可視化
+   - トレーニングプランの自動生成
+
+2. パフォーマンス最適化
+   - キャッシュの導入
+   - クエリの最適化
+   - インデックス設計の見直し
+
+## 11. 参考リンク
+
+### 公式ドキュメント
+- [Nablarchドキュメント](https://nablarch.github.io/docs/LATEST/doc/)
+- [アプリケーションフレームワーム解説書](https://nablarch.github.io/docs/LATEST/doc/application_framework/application_framework/index.html)
+- [RESTfulウェブサービス編](https://nablarch.github.io/docs/LATEST/doc/application_framework/application_framework/web_service/rest/index.html)
+
+### 開発環境セットアップ
+- [初期セットアップの前に](https://nablarch.github.io/docs/LATEST/doc/application_framework/application_framework/blank_project/beforeFirstStep.html)
+- [初期セットアップ手順](https://nablarch.github.io/docs/LATEST/doc/application_framework/application_framework/blank_project/FirstStep.html)
+- [Maven アーキタイプのセットアップ](https://nablarch.github.io/docs/LATEST/doc/application_framework/application_framework/blank_project/maven.html)
+
+### APIリファレンス
+- [Nablarch API リファレンス](https://nablarch.github.io/docs/LATEST/javadoc/index.html)
+- [モジュール一覧](https://nablarch.github.io/docs/LATEST/doc/about_nablarch/mvn_module.html)
+
+### チュートリアルとサンプル
+- [Getting Started（RESTful Web サービス編）](https://nablarch.github.io/docs/LATEST/doc/application_framework/application_framework/web_service/rest/getting_started/index.html)
+- [サンプルプロジェクト](https://github.com/nablarch/nablarch-example-rest)
+
+### 設定ガイド
+- [Nablarchアプリケーションフレームワーク設定ガイド](https://nablarch.github.io/docs/LATEST/doc/application_framework/application_framework/setting_guide/index.html)
+- [デフォルト設定一覧](https://nablarch.github.io/docs/LATEST/doc/application_framework/application_framework/configuration/index.html)
